@@ -14,6 +14,9 @@ package practice;
         		Synchronized method is used to lock an object for any shared resource.
         		When a thread invokes a synchronized method, it automatically acquires the lock for that object and releases it when the thread completes its task.
         	- Synchronized block.
+        		Synchronized block can be used to perform synchronization on any specific resource of the method.
+        		Suppose we have 50 lines of code in our method, but we want to synchronize only 5 lines, in such cases, we can use synchronized block.
+        		
         - Static synchronization.
     		Cooperation (Inter-thread communication in java)
 
@@ -54,6 +57,28 @@ class SyncMethodObj {
 	}
 }
 
+class SyncBlockObj {
+	int n;
+
+	public SyncBlockObj(int n) {
+		this.n = n;
+	}
+
+	public void print(String str) {
+		System.out.println("Printing from:" + str);
+		synchronized (this) {
+			for (int i = 0; i < n; i++) {
+				System.out.println("Printing:" + i);
+				try {
+					Thread.sleep(400);
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+			}
+		}
+	}
+}
+
 public class Synchronization {
 
 	public static void main(String[] args) {
@@ -74,7 +99,7 @@ public class Synchronization {
 		 * printing:4 printing:4
 		 */
 
-		//method is synchronized. So output will be consistent
+		// method is synchronized. So output will be consistent
 		SyncMethodObj syncMethodObj = new SyncMethodObj(5);
 
 		Runnable syncMethodR1 = () -> syncMethodObj.print("syncMethodThread1");
@@ -92,6 +117,26 @@ public class Synchronization {
 		 * printing:2 printing:3 printing:4
 		 */
 
+		// synchronized block
+		SyncBlockObj syncBlockObj = new SyncBlockObj(5);
+
+		System.out.println("---------------Synchronozed Block---------------");
+
+		Runnable syncBlockR1 = () -> syncBlockObj.print("syncBlockThread1");
+		Thread syncBlockThread1 = new Thread(syncBlockR1);
+
+		syncBlockThread1.start();
+
+		Runnable syncBlockR2 = () -> syncBlockObj.print("syncBlockThread2");
+		Thread syncBlockThread2 = new Thread(syncBlockR2);
+
+		syncBlockThread2.start();
+
+		/*
+		 * output Printing from:syncBlockThread1 Printing:0 Printing
+		 * from:syncBlockThread2 Printing:1 Printing:2 Printing:3 Printing:4 Printing:0
+		 * Printing:1 Printing:2 Printing:3 Printing:4
+		 */
 	}
 
 }
