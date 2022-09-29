@@ -18,8 +18,13 @@ package practice;
         		Suppose we have 50 lines of code in our method, but we want to synchronize only 5 lines, in such cases, we can use synchronized block.
         		
         - Static synchronization.
+        	If you make any static method as synchronized, the lock will be on the class not on object.
     		Cooperation (Inter-thread communication in java)
-
+		
+		- Synchronization Vs Static Synchronization
+			Synchronization -> locking on this object lock
+			Static Synchronization -> locking on .class object lock
+			
  */
 
 class NotSyncObject {
@@ -74,6 +79,38 @@ class SyncBlockObj {
 				} catch (Exception e) {
 					// TODO: handle exception
 				}
+			}
+		}
+	}
+}
+
+class SyncStaticClass {
+	static int n;
+
+	SyncStaticClass(int n) {
+		this.n = n;
+	}
+
+	synchronized static public void printSyncMethod(String str) {
+		for (int i = 0; i < n; i++) {
+			System.out.println("Printing printSyncMethod From:" + str + "  " + i);
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void printNonSyncMethod(String str) {
+		for (int i = 0; i < n; i++) {
+			System.out.println("Printing printNonSyncMethod From:" + str + "  " + i);
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}
@@ -137,6 +174,59 @@ public class Synchronization {
 		 * from:syncBlockThread2 Printing:1 Printing:2 Printing:3 Printing:4 Printing:0
 		 * Printing:1 Printing:2 Printing:3 Printing:4
 		 */
+
+		// Static synchronization 2 instance/obj of same class trying to access same
+		// synchronized static method
+		System.out.println("---------------Static Synchronozation---------------");
+		SyncStaticClass syncStatiObj1 = new SyncStaticClass(5);
+		Runnable syncStatiR1 = () -> syncStatiObj1.printSyncMethod("syncStatiObj1");
+		Thread syncStatiThread1 = new Thread(syncStatiR1);
+
+		SyncStaticClass syncStatiObj2 = new SyncStaticClass(5);
+		Runnable syncStatiR2 = () -> syncStatiObj2.printSyncMethod("syncStatiObj2");
+		Thread syncStatiThread2 = new Thread(syncStatiR2);
+
+		syncStatiThread1.start();
+		syncStatiThread2.start();
+
+		/*
+		 * output ---------------Static Synchronozation--------------- Printing
+		 * printSyncMethod From:syncStatiObj1 0 Printing printSyncMethod
+		 * From:syncStatiObj1 1 Printing printSyncMethod From:syncStatiObj1 2 Printing
+		 * printSyncMethod From:syncStatiObj1 3 Printing printSyncMethod
+		 * From:syncStatiObj1 4 Printing printSyncMethod From:syncStatiObj2 0 Printing
+		 * printSyncMethod From:syncStatiObj2 1 Printing printSyncMethod
+		 * From:syncStatiObj2 2 Printing printSyncMethod From:syncStatiObj2 3 Printing
+		 * printSyncMethod From:syncStatiObj2 4
+		 */
+
+		// Static synchronization 1st instance/obj occurs the lock. 2nd instance/obj of
+		// same class cant access the non static methods. it has to wait until the
+		// previous instance release the lock.
+
+		SyncStaticClass syncStatiObj3 = new SyncStaticClass(5);
+		Runnable syncStatiR3 = () -> syncStatiObj3.printSyncMethod("syncStatiObj3");
+		Thread syncStatiThread3 = new Thread(syncStatiR3);
+
+		SyncStaticClass syncStatiObj4 = new SyncStaticClass(5);
+		Runnable syncStatiR4 = () -> syncStatiObj2.printNonSyncMethod("syncStatiObj4");
+		Thread syncStatiThread4 = new Thread(syncStatiR4);
+
+		syncStatiThread3.start();
+		syncStatiThread4.start();
+
+		/*
+		 * ---------------Static Synchronozation--------------- Printing printSyncMethod
+		 * From:syncStatiObj3 0 Printing printNonSyncMethod From:syncStatiObj4 0
+		 * Printing printSyncMethod From:syncStatiObj3 1 Printing printNonSyncMethod
+		 * From:syncStatiObj4 1 Printing printSyncMethod From:syncStatiObj3 2 Printing
+		 * printNonSyncMethod From:syncStatiObj4 2 Printing printSyncMethod
+		 * From:syncStatiObj3 3 Printing printNonSyncMethod From:syncStatiObj4 3
+		 * Printing printSyncMethod From:syncStatiObj3 4 Printing printNonSyncMethod
+		 * From:syncStatiObj4 4
+		 * 
+		 */
+
 	}
 
 }
