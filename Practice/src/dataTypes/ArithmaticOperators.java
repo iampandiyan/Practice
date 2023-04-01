@@ -4,6 +4,17 @@ public class ArithmaticOperators {
 
 	public static void main(String[] args) {
 		// Precedence
+		// PUMA is a REBL TA
+		// P - Pre/post Unary
+		// U - Unary
+		// M - Multiplicative
+		// A- Additttive
+		// R - Relational
+		// E - Equaility
+		// B - Bitwise
+		// L - logical
+		// T - Ternary
+		// A - Assignement
 		// Post Unary expr++ expr--
 		// Pre-Unary ++expr --expr
 		// other unary +expr -expr !expr
@@ -171,12 +182,47 @@ public class ArithmaticOperators {
 		y = 4;
 		boolean zBool;
 		zBool = y + x * x > y & y != ++x;// 4 + 3 * 3> 4 & 4 != 4 = 13 > 4 != 4 =false
-		
-		boolean r=true;
-		boolean m=false;
-		
-		//zBool=r && 4 
-		
+
+		boolean r = true;
+		boolean m = false;
+
+		zBool = r && m ^ r || m | r; // r && (m ^ r) || (m | r) true
+
+		x = 3;
+		y = 6;
+		z = 2;
+
+		z *= y / x - y - x > y ? 4 : 2; // 2 - 6 - 3 > 6 ? 4 :2 => z *=2 = 4
+
+		x = 3;
+		y = 4;
+		z = --x * x + y + 8; // 2 * 2 + 4 + 8 = 16
+
+		x = 3;
+		y = 4;
+		z = --x * (x + y + 8); // 2 * (2 + 4 + 8)=28
+
+		x = 3;
+		y = 4;
+		z = 0;
+		z = (--x * x + (y + x) - y--);
+		System.out.println("-----------");
+		System.out.println(z);// 6
+
+		x = 3;
+		y = 4;
+		z = 0;
+		z = --x * ((x + y) + x) - y--;
+		System.out.println("-----------");
+		System.out.println(z);// 12
+
+		x = 3;
+		y = 4;
+		z = 0;
+		z = (--x * x + y + (x - y--));
+		System.out.println("-----------");
+		System.out.println(z);// 6
+
 	}
 
 }
